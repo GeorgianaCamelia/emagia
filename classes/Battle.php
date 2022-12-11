@@ -33,17 +33,11 @@ class Battle
             $this->initTurn();
             echo "\nTURN: {$this->turns}\n";
             if ($this->heroAttacks) {
-                echo "\nATTACKER: {$this->hero->getName()}\nDEFENDER: {$this->beast->getName()}";
-            } else {
-                echo "\nATTACKER: {$this->beast->getName()}\nDEFENDER: {$this->hero->getName()}";
-            }
-            if ($this->heroAttacks) {
                 $this->currentAttack = $this->hero->attack();
                 $this->luckyDefender = $this->beast->amILucky();
                 if (!$this->luckyDefender) {
                     $this->currentDefend = $this->beast->defend();
                     $this->setDamage($this->calculateDamage($this->currentAttack, $this->currentDefend));
-                    echo "\nNORMAL ATT. | {$this->currentAttack} | {$this->currentDefend} | {$this->currentDamage}";
                     // check hero attack skills
                     $this->applyHeroSkills(ATTACK_SKILL);
 
@@ -55,16 +49,12 @@ class Battle
                 if (!$this->luckyDefender) {
                     $this->currentDefend = $this->hero->defend();
                     $this->setDamage($this->calculateDamage($this->currentAttack, $this->currentDefend));
-                    echo "\nNORMAL ATT. | {$this->currentAttack} | {$this->currentDefend} | {$this->currentDamage}";
                     // check hero defend skills
                     $this->applyHeroSkills(DEFEND_SKILL);
 
                     $this->hero->applyDamage($this->currentDamage);
                 }
             }
-
-//            echo $this->luckyDefender ? "\nLUCKY:true" : "\nLUCKY:false";
-//            echo $this->hero->getStats() . "\n" . $this->beast->getStats();
             $this->writeTurnStats();
             $this->goToNextTurn();
             $this->switchPlayers();
@@ -122,21 +112,15 @@ class Battle
         foreach ($this->currentSkills as $skill) {
             switch ($skill->getName()) {
                 case RAPID_STRIKE:
-                    echo "\nRAPID_STRIKE | {$this->currentAttack} | {$this->currentDefend} | {$this->currentDamage}";
                     $this->addDamage($this->calculateDamage($this->hero->attack(), $this->beast->defend()));
                     $this->currentAttack += $this->hero->attack();
                     $this->currentDefend += $this->beast->defend();
-                    echo "\nAFTER SKILL | {$this->currentDamage}";
                     break;
                 case MAGIC_WAVE:
-                    echo "\nMAGIC_WAVE | {$this->currentAttack} | {$this->currentDefend} | {$this->currentDamage}";
                     $this->addDamage(intdiv($this->hero->attack(), 2));
-                    echo "\nAFTER SKILL | {$this->currentDamage}";
                     break;
                 case MAGIC_SHIELD:
-                    echo "\nMAGIC_SHIELD | {$this->currentAttack} | {$this->currentDefend} | {$this->currentDamage}";
                     $this->setDamage($this->calculateDamage(intdiv($this->currentAttack, 2), $this->currentDefend));
-                    echo "\nAFTER SKILL | {$this->currentDamage}";
                     break;
                 default:
                     break;
@@ -180,8 +164,6 @@ class Battle
             $message .= "\n'{$defender->getName()}' MADE A LUCKY ESCAPE";
         }
         $message .= "\n'{$defender->getName()}' BLOCK -----> {$this->currentDefend}";
-//        {$attacker->getName()} had been stricken with a total power of {$this->currentAttack}
-//        {$defender->getName()} did his best to defend himself using a power of {$this->currentDefend},
         $message .= "\nTotal damage {$this->currentDamage}";
         if ($this->currentSkills) {
             $message .= "\nOur hero, '{$this->hero->getName()}', had the chance to of using:";
